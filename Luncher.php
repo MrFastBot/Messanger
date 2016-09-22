@@ -1,30 +1,24 @@
 <?php
 define('BOT_TOKEN', '271593750:AAFPRqeGiMt9U0H0mbBZ3mKOMT3L4EXg_AU');
 define('API_URL', 'https://api.telegram.org/bot'.BOT_TOKEN.'/');
-
 function apiRequestWebhook($method, $parameters) {
   if (!is_string($method)) {
     error_log("Method name must be a string\n");
     return false;
   }
-
   if (!$parameters) {
     $parameters = array();
   } else if (!is_array($parameters)) {
     error_log("Parameters must be an array\n");
     return false;
   }
-
   $parameters["method"] = $method;
-
   header("Content-Type: application/json");
   echo json_encode($parameters);
   return true;
 }
-
 function exec_curl_request($handle) {
   $response = curl_exec($handle);
-
   if ($response === false) {
     $errno = curl_errno($handle);
     $error = curl_error($handle);
@@ -32,10 +26,8 @@ function exec_curl_request($handle) {
     curl_close($handle);
     return false;
   }
-
   $http_code = intval(curl_getinfo($handle, CURLINFO_HTTP_CODE));
   curl_close($handle);
-
   if ($http_code >= 500) {
     // do not wat to DDOS server if something goes wrong
     sleep(10);
@@ -54,23 +46,19 @@ function exec_curl_request($handle) {
     }
     $response = $response['result'];
   }
-
   return $response;
 }
-
 function apiRequest($method, $parameters) {
   if (!is_string($method)) {
     error_log("Method name must be a string\n");
     return false;
   }
-
   if (!$parameters) {
     $parameters = array();
   } else if (!is_array($parameters)) {
     error_log("Parameters must be an array\n");
     return false;
   }
-
   foreach ($parameters as $key => &$val) {
     // encoding to JSON array parameters, for example reply_markup
     if (!is_numeric($val) && !is_string($val)) {
@@ -78,37 +66,30 @@ function apiRequest($method, $parameters) {
     }
   }
   $url = API_URL.$method.'?'.http_build_query($parameters);
-
   $handle = curl_init($url);
   curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 5);
   curl_setopt($handle, CURLOPT_TIMEOUT, 60);
-
   return exec_curl_request($handle);
 }
-
 function apiRequestJson($method, $parameters) {
   if (!is_string($method)) {
     error_log("Method name must be a string\n");
     return false;
   }
-
   if (!$parameters) {
     $parameters = array();
   } else if (!is_array($parameters)) {
     error_log("Parameters must be an array\n");
     return false;
   }
-
   $parameters["method"] = $method;
-
   $handle = curl_init(API_URL);
   curl_setopt($handle, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($handle, CURLOPT_CONNECTTIMEOUT, 5);
   curl_setopt($handle, CURLOPT_TIMEOUT, 60);
   curl_setopt($handle, CURLOPT_POSTFIELDS, json_encode($parameters));
   curl_setopt($handle, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
-
   return exec_curl_request($handle);
 }
 function processMessage($message) {
@@ -127,7 +108,6 @@ function processMessage($message) {
     	
     	$txt = file_get_contents('banlist.txt');
 $membersid= explode("\n",$txt);
-
 $substr = substr($text, 0, 28);
 	if (!in_array($chat_id,$membersid)) {
 		apiRequest("forwardMessage", array('chat_id' => $admin,  "from_chat_id"=> $chat_id ,"message_id" => $message_id));
@@ -139,7 +119,6 @@ Get Out Of Here Idiot🖕
 --------------------------------
 شما در لیست سیاه قرار دارید 🚫
 لطفا پیام ندهید🖕" ,"parse_mode" =>"HTML"));	
-
 }
     }
     else if($rpto !="" && $chat_id==$admin){
@@ -203,7 +182,6 @@ Get Out Of Here Idiot🖕
     	
     	$txt = file_get_contents('banlist.txt');
 $membersid= explode("\n",$txt);
-
 $substr = substr($text, 0, 28);
 	if (!in_array($chat_id,$membersid)) {
 		apiRequest("forwardMessage", array('chat_id' => $admin,  "from_chat_id"=> $chat_id ,"message_id" => $message_id));
@@ -215,7 +193,6 @@ Get Out Of Here Idiot🖕
 --------------------------------
 شما در لیست سیاه قرار دارید 🚫
 لطفا پیام ندهید🖕" ,"parse_mode" =>"HTML"));	
-
 }
     }
     else if($rpto !="" && $chat_id==$admin){
@@ -263,7 +240,6 @@ else if ($chat_id == $admin && $booleans[0] == "true") {
     	
     	$txt = file_get_contents('banlist.txt');
 $membersid= explode("\n",$txt);
-
 $substr = substr($text, 0, 28);
 	if (!in_array($chat_id,$membersid)) {
 		apiRequest("forwardMessage", array('chat_id' => $admin,  "from_chat_id"=> $chat_id ,"message_id" => $message_id));
@@ -275,7 +251,6 @@ Get Out Of Here Idiot🖕
 --------------------------------
 شما در لیست سیاه قرار دارید 🚫
 لطفا پیام ندهید🖕" ,"parse_mode" =>"HTML"));	
-
 }
     }
     else if($rpto !="" && $chat_id==$admin){
@@ -285,7 +260,6 @@ Get Out Of Here Idiot🖕
 	apiRequest("sendMessage", array('chat_id' => $chat_id, "text" =>"🗣پیام شما ارسال شد. " ,"parse_mode" =>"HTML"));
     
 }
-
  else if ($chat_id == $admin && $booleans[0] == "true") {
        $sticker = $message['sticker']['file_id'];
 		$ttxtt = file_get_contents('pmembers.txt');
@@ -294,7 +268,6 @@ Get Out Of Here Idiot🖕
 			//apiRequest("sendMessage", array('chat_id' => $membersidd[$y], "text" => $texttoall,"parse_mode" =>"HTML"));
 			
 			    apiRequest("sendsticker", array('chat_id' => $membersidd[$y], "sticker" => $sticker));
-
 			
 			
 		}
@@ -318,7 +291,6 @@ Get Out Of Here Idiot🖕
     	
     	$txt = file_get_contents('banlist.txt');
 $membersid= explode("\n",$txt);
-
 $substr = substr($text, 0, 28);
 	if (!in_array($chat_id,$membersid)) {
 		apiRequest("forwardMessage", array('chat_id' => $admin,  "from_chat_id"=> $chat_id ,"message_id" => $message_id));
@@ -330,7 +302,6 @@ Get Out Of Here Idiot🖕
 --------------------------------
 شما در لیست سیاه قرار دارید 🚫
 لطفا پیام ندهید🖕" ,"parse_mode" =>"HTML"));	
-
 }
     }
     else if($rpto !="" && $chat_id==$admin){
@@ -352,7 +323,6 @@ Get Out Of Here Idiot🖕
 		$ttxtt = file_get_contents('pmembers.txt');
 		$membersidd= explode("\n",$ttxtt);
 		for($y=0;$y<count($membersidd);$y++){
-
     apiRequest("sendDocument", array('chat_id' => $membersidd[$y], "document" => $video));
     
 			
@@ -375,7 +345,6 @@ Get Out Of Here Idiot🖕
     	
     	$txt = file_get_contents('banlist.txt');
 $membersid= explode("\n",$txt);
-
 $substr = substr($text, 0, 28);
 	if (!in_array($chat_id,$membersid)) {
 		apiRequest("forwardMessage", array('chat_id' => $admin,  "from_chat_id"=> $chat_id ,"message_id" => $message_id));
@@ -387,7 +356,6 @@ Get Out Of Here Idiot🖕
 --------------------------------
 شما در لیست سیاه قرار دارید 🚫
 لطفا پیام ندهید🖕" ,"parse_mode" =>"HTML"));	
-
 }
     }
     else if($rpto !="" && $chat_id==$admin){
@@ -409,7 +377,6 @@ Get Out Of Here Idiot🖕
 		$ttxtt = file_get_contents('pmembers.txt');
 		$membersidd= explode("\n",$ttxtt);
 		for($y=0;$y<count($membersidd);$y++){
-
         apiRequest("sendVoice", array('chat_id' => $membersidd[$y], "voice" => $video));
 		}
 		$memcout = count($membersidd)-1;
@@ -429,7 +396,6 @@ Get Out Of Here Idiot🖕
     	
     	$txt = file_get_contents('banlist.txt');
 $membersid= explode("\n",$txt);
-
 $substr = substr($text, 0, 28);
 	if (!in_array($chat_id,$membersid)) {
 		apiRequest("forwardMessage", array('chat_id' => $admin,  "from_chat_id"=> $chat_id ,"message_id" => $message_id));
@@ -441,7 +407,6 @@ Get Out Of Here Idiot🖕
 --------------------------------
 شما در لیست سیاه قرار دارید 🚫
 لطفا پیام ندهید🖕" ,"parse_mode" =>"HTML"));	
-
 }
     }
     else if($rpto !="" && $chat_id==$admin){
@@ -463,9 +428,7 @@ Get Out Of Here Idiot🖕
 		$ttxtt = file_get_contents('pmembers.txt');
 		$membersidd= explode("\n",$ttxtt);
 		for($y=0;$y<count($membersidd);$y++){
-
                 apiRequest("sendaudio", array('chat_id' => $membersidd[$y], "audio" => $video));
-
 		}
 		$memcout = count($membersidd)-1;
 	 	apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => "📦 پیام شما به  ".$memcout." مخاطب ازسال شد.
@@ -484,7 +447,6 @@ Get Out Of Here Idiot🖕
     	
     	$txt = file_get_contents('banlist.txt');
 $membersid= explode("\n",$txt);
-
 $substr = substr($text, 0, 28);
 	if (!in_array($chat_id,$membersid)) {
 		apiRequest("forwardMessage", array('chat_id' => $admin,  "from_chat_id"=> $chat_id ,"message_id" => $message_id));
@@ -496,7 +458,6 @@ Get Out Of Here Idiot🖕
 --------------------------------
 شما در لیست سیاه قرار دارید 🚫
 لطفا پیام ندهید🖕" ,"parse_mode" =>"HTML"));	
-
 }
     }
     else if($rpto !="" && $chat_id==$admin){
@@ -520,9 +481,7 @@ else if ($chat_id == $admin && $booleans[0] == "true") {
 		$ttxtt = file_get_contents('pmembers.txt');
 		$membersidd= explode("\n",$ttxtt);
 		for($y=0;$y<count($membersidd);$y++){
-
     apiRequest("sendcontact", array('chat_id' => $membersidd[$y], "phone_number" => $phone,"Last_name" =>$last,"first_name"=> $first));
-
 		}
 		$memcout = count($membersidd)-1;
 	 	apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => "📦 پیام شما به  ".$memcout." مخاطب ازسال شد.
@@ -549,7 +508,6 @@ else if ($chat_id == $admin && $booleans[0] == "true") {
         
       if($chat_id!=$admin){
       apiRequest("sendMessage", array('chat_id' => $chat_id,"text"=>$pmembersiddd[0] ,"parse_mode"=>"HTML"));
-
 $txxt = file_get_contents('pmembers.txt');
 $pmembersid= explode("\n",$txxt);
 	if (!in_array($chat_id,$pmembersid)) {
@@ -558,7 +516,6 @@ $pmembersid= explode("\n",$txxt);
 ";
     	file_put_contents('pmembers.txt',$aaddd);
 }
-
 }
 if($chat_id==$admin){
   apiRequestJson("sendMessage", array('chat_id' => $chat_id, "text" => ' سلام قربان حوش آمدید😉
@@ -570,19 +527,14 @@ if($chat_id==$admin){
         'selective' => true,
         'resize_keyboard' => true)));
 }
-
     } else if ($matches[0] == "/setstart" && $chat_id == $admin) {
-
     $starttext = str_replace("/setstart","",$text);
             
     file_put_contents('msgs.txt',$starttext."
-
 -!-@-#-$"."
 ".$pmembersiddd[1]);
 apiRequestJson("sendMessage", array('chat_id' => $chat_id, "text" =>"📝پیام خوش آمد گویی به 👇
-
 ".$starttext.""."
-
 👆تغییر یافت
 ."));
     
@@ -595,13 +547,10 @@ apiRequestJson("sendMessage", array('chat_id' => $chat_id, "text" =>"📝پیا�
     $starttext = str_replace("/setdone","",$text);
             
     file_put_contents('msgs.txt',$pmembersiddd[0]."
-
 -!-@-#-$"."
 ".$starttext);
 apiRequestJson("sendMessage", array('chat_id' => $chat_id, "text" =>"📝پیام پیش فرض شما به 👇
-
 ".$starttext.""."
-
 👆تغییر یافت
 ."));
     
@@ -613,7 +562,6 @@ apiRequestJson("sendMessage", array('chat_id' => $chat_id, "text" =>"📝پیا�
     	
     	$txt = file_get_contents('banlist.txt');
 $membersid= explode("\n",$txt);
-
 $substr = substr($text, 0, 28);
 	if (!in_array($chat_id,$membersid)) {
 		apiRequest("forwardMessage", array('chat_id' => $admin,  "from_chat_id"=> $chat_id ,"message_id" => $message_id));
@@ -631,7 +579,6 @@ else{
   $textfa =str_replace("thisisnarimanfrombeatbotteam","🖕",$text);;
 apiRequest("sendMessage", array('chat_id' => $admin, "text" =>  $textfa,"parse_mode" =>"HTML"));	
 apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $pmembersiddd[1] ,"parse_mode" =>"HTML"));	
-
 }
 }
     	
@@ -644,10 +591,8 @@ apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $pmembersiddd[1
 —---------------------------------------------
 🔶🔸 Clean Members
 🔶🔸پاک کردن لیست مخاطبین
-
 🔷🔹Clean Block List
 🔷🔹پاک کردن لیست سیاه
-
 در صورت انصراف Back را بزنید
 .', 'reply_markup' => array(
         'keyboard' => array(array('❌ Clean Members ','❌ Clean Block List '),array('🔙 Back')),
@@ -661,7 +606,6 @@ apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $pmembersiddd[1
       
     		apiRequest("sendMessage", array('chat_id' => $admin, "text" => "`برای پاسخ پیام مورد نظر را ریپلای کنید`
 🔷 لیست کامنت های موجود :
-
 🔹`1.` */ban*
  قرار دادن مخاطب در لیست سیاه(با ریپلای) 
 —------------------------------
@@ -677,10 +621,8 @@ apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $pmembersiddd[1
 اگر شخصی در ربات برای شما پیامی بفرستد این پیام برای او ارسال میشود.
 مثال :
 */setdone* پیامت رسید صبر کن تا جواب بدم
-
 ➖➖➖➖➖➖➖➖➖➖➖
 🔶 لیست دکمه  های موجود :
-
 🔸`1.`*Send To All*
 ارسال پیام متنی به همه ی کاربران
 —------------------------------
@@ -692,7 +634,6 @@ apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $pmembersiddd[1
 —-------------------------------
 🔸`4.`*Settings*
 تنظیمان ربات
-
 .","parse_mode" =>"MARKDOWN",'reply_markup' => array(
         'keyboard' => array(array('🗣 Send To All'),array('⚓️ Help','👥 Members','❌ Blocked Users'),array("Settings ⚙")),
         'one_time_keyboard' => true,
@@ -801,7 +742,6 @@ apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $pmembersiddd[1
 		$addd = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "", $addd);
 		$addd .= $rpto."
 ";
-
     	file_put_contents('banlist.txt',$addd);
     	apiRequest("sendMessage", array('chat_id' => $rpto, "text" => "<b>You Are Banned🚫,</b>
 -----------------
@@ -820,12 +760,9 @@ apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $pmembersiddd[1
 		$adddd = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "", $adddd);
     $adddd .="
 ";
-
-
 		$banid= explode("\n",$adddd);
     if($banid[1]=="")
       $adddd = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "", $adddd);
-
     	file_put_contents('banlist.txt',$adddd);
 }
 		apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => "UnBanned
@@ -841,25 +778,18 @@ apiRequest("sendMessage", array('chat_id' => $chat_id, "text" => $pmembersiddd[1
     
   }
 }
-
-
 define('WEBHOOK_URL', 'https://my-site.example.com/secret-path-for-webhooks/');
-
 if (php_sapi_name() == 'cli') {
   // if run from console, set or delete webhook
   apiRequest('setWebhook', array('url' => isset($argv[1]) && $argv[1] == 'delete' ? '' : WEBHOOK_URL));
   exit;
 }
-
-
 $content = file_get_contents("php://input");
 $update = json_decode($content, true);
-
 if (!$update) {
   // receive wrong update, must not happen
   exit;
 }
-
 if (isset($update["message"])) {
   processMessage($update["message"]);
 }
